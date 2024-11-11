@@ -10,7 +10,7 @@ function ForumPage() {
 
       <div className="relative mb-6">
         <img
-          src="/path/to/forum-image.jpg"
+          src="../assets/tani2.png"
           alt="Discussion group"
           className="w-full rounded-lg shadow-lg"
         />

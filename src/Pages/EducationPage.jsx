@@ -1,6 +1,8 @@
 // src/pages/EducationPage.jsx
 import React from "react";
 import ArticleCard from "../components/ArticleCard";
+import tani1 from "../assets/tani1.png";
+import tani2 from "../assets/tani2.png";
 
 function EducationPage() {
   const articles = [
@@ -9,7 +11,7 @@ function EducationPage() {
       title: "Cara Menanam Jagung: Langkah Perawatan Hingga Panen Jagung",
       author: "Siti M",
       date: "18 Januari 2024",
-      image: "/path/to/image1.jpg",
+      image: tani1,
       categories: ["Budi Daya", "Informasi"]
     },
     {
@@ -17,7 +19,7 @@ function EducationPage() {
       title: "Budi Daya Jagung Berhasil",
       author: "Chika",
       date: "8 Juli 2023",
-      image: "/path/to/image2.jpg",
+      image: tani2,
       categories: ["Budi Daya", "Informasi"]
     },
     {
@@ -25,7 +27,7 @@ function EducationPage() {
       title: "Apa Saja yang Dibutuhkan Agar Dapat Memanen Jagung dengan Maksimal",
       author: "Dimas",
       date: "1 Maret 2024",
-      image: "/path/to/image3.jpg",
+      image: tani1,
       categories: ["Budi Daya", "Teknologi"]
     }
   ];
