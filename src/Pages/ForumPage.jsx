@@ -1,4 +1,3 @@
-// src/pages/ForumPage.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -16,12 +15,23 @@ function ForumPage() {
         />
       </div>
 
-      <Link
-        to="/forum/community"
-        className="block text-center bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-semibold shadow-lg"
-      >
-        Masuk ke Forum Komunitas
-      </Link>
+      <div className="space-y-4">
+        {/* Tombol masuk ke forum komunitas */}
+        <Link
+          to="/forum/community"
+          className="block text-center bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-semibold shadow-lg"
+        >
+          Masuk ke Forum Komunitas
+        </Link>
+
+        {/* Tombol masuk ke halaman chat */}
+        <Link
+          to="/chat"
+          className="block text-center bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-semibold shadow-lg"
+        >
+          Buka Fitur Chat
+        </Link>
+      </div>
     </div>
   );
 }

@@ -1,35 +1,90 @@
-// src/pages/ArticleDetailPage.jsx
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import api from "../api";
+import DOMPurify from "dompurify"; // Mengimpor DOMPurify untuk sanitasi
 
 function ArticleDetailPage() {
+  const { id } = useParams(); // Ambil ID artikel dari URL
+  const [article, setArticle] = useState(null); // State untuk artikel
+  const [loading, setLoading] = useState(true); // State untuk loading
+  const [error, setError] = useState(false); // State untuk error handling
+
+  // Fungsi untuk mengambil artikel berdasarkan ID
+  const fetchArticle = async () => {
+    try {
+      console.log("Fetching article with ID:", id); // Debugging log
+      const response = await api.get(`/articles/${id}`); // Panggil endpoint API dengan ID dinamis
+      setArticle(response.data); // Set data artikel ke state
+      setLoading(false); // Matikan loading
+    } catch (err) {
+      console.error("Error fetching article:", err); // Debugging log
+      setError(true); // Tampilkan error
+      setLoading(false);
+    }
+  };
+
+  // Gunakan useEffect untuk memanggil fetchArticle saat komponen dimuat
+  useEffect(() => {
+    fetchArticle();
+  }, [id]);
+
+  if (loading) {
+    return <p className="text-center text-gray-500">Memuat artikel...</p>;
+  }
+
+  if (error || !article) {
+    return <p className="text-center text-red-500">Terjadi kesalahan: Artikel tidak ditemukan.</p>;
+  }
+
+  // Sanitasi konten HTML sebelum merender
+  const sanitizedContent = DOMPurify.sanitize(article.content);
+
   return (
     <div className="container mx-auto p-6">
-      <Link to="/edukasi" className="text-green-600 hover:underline text-sm mb-4 block">&larr; Kembali ke halaman utama</Link>
-      
-      <h2 className="text-3xl font-bold text-green-700 mb-4">Cara Menanam Jagung: Langkah Perawatan Hingga Panen Jagung</h2>
-      
+      <Link to="/edukasi" className="text-green-600 hover:underline text-sm mb-4 block">
+        &larr; Kembali ke halaman utama
+      </Link>
+
+      <h2 className="text-3xl font-bold text-green-700 mb-4">{article.title}</h2>
+
       <div className="flex items-center text-gray-600 text-sm mb-6">
-        <span className="bg-green-100 text-green-600 px-3 py-1 rounded-full mr-2">Budi Daya</span>
-        <span className="bg-green-100 text-green-600 px-3 py-1 rounded-full">Informasi</span>
+        {article.categories &&
+          article.categories.split(",").map((category, index) => (
+            <span
+              key={index}
+              className="bg-green-100 text-green-600 px-3 py-1 rounded-full mr-2"
+            >
+              {category}
+            </span>
+          ))}
         <span className="mx-2">•</span>
-        <span>Siti M</span>
+        <span>{article.author}</span>
         <span className="mx-2">•</span>
-        <span>18 Januari 2024</span>
+        <span>
+          {new Date(article.date).toLocaleDateString("id-ID", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })}
+        </span>
       </div>
 
-      <img src="/path/to/detail-image.jpg" alt="Corn field" className="w-full rounded-lg shadow-lg mb-6" />
+      {/* Perbaiki gambar agar responsif dan tidak terlalu besar */}
+      {article.image && (
+        <img
+          src={`http://localhost:3000${article.image}`}
+          alt={article.title}
+          className="w-1/2 mx-auto rounded-lg shadow-lg mb-6"  // Mengatur ukuran gambar dan meletakkannya di tengah
+        />
+      )}
 
-      <div className="text-gray-700 leading-relaxed space-y-4">
-        <p>
-          Cara Menanam Jagung – Apakah kamu memiliki lahan kosong yang tak terpakai? Bila iya, mungkin kamu bisa memanfaatkan lahan tersebut untuk berkebun, misalnya budi daya jagung. Melakukan budi daya jagung memang membutuhkan ketelatenan, namun aktivitas ini juga bisa menjadi quality time kamu di sela pekerjaan lainnya.
-        </p>
-        <p>
-          Budi daya jagung akan menjadi aktivitas yang menyenangkan. Namun, perlu diketahui, jagung adalah tanaman musim panas yang sebaiknya ditanam setelah suhu tanah mencapai 16 derajat celcius. Sebab, jagung yang ditanam pada tanah basah tidak berkecambah. Suhu udara terbaik untuk menumbuhkan jagung adalah antara 16 sampai 35 derajat celcius.
-        </p>
-        <p>
-          Berdasarkan penjelasan dari U.S FoodData Central, ada beberapa kandungan nutrisi dalam 100 gram jagung kuning rebus. Di antaranya kalori 96, air 73 persen, protein 3,4 gram, karbohidrat 21 gram, gula 4,5 gram, serat 2,4 gram, dan lemak 1,5 gram.
-        </p>
+      {/* Layout Responsif Teks */}
+      <div className="prose prose-lg max-w-3xl mx-auto text-gray-700 leading-relaxed space-y-4">
+        {/* Render konten yang sudah disanitasi */}
+        <div
+          className="article-content"
+          dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+        />
       </div>
     </div>
   );

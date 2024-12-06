@@ -5,20 +5,19 @@ import FarmerImage from "../assets/petani.jpg"; // Pastikan path gambar benar
 
 function DiseaseDetectionPage() {
   return (
-    <div className="container mx-auto p-6">
-      <h2 className="text-3xl font-bold text-green-700 mb-4">Deteksi Penyakit</h2>
-      <p className="text-gray-700 mb-6">Periksa penyakit tanaman jagung Anda!</p>
+    <div className="container mx-auto p-8">
+      <h2 className="text-3xl font-bold text-green-700 mb-2">Deteksi Penyakit</h2>
+      <p className="text-gray-700 mb-2">Periksa penyakit tanaman jagung Anda!</p>
 
       {/* Gambar Petani dengan Tombol Riwayat */}
       <div className="relative flex items-center justify-center mb-6">
         <img
           src={FarmerImage}
           alt="Petani"
-          className="w-full md:w-3/4 lg:w-2/3 h-80 md:h-96 lg:h-[28rem] rounded-lg shadow-lg object-cover"
+          className="w-full h-80 md:h-96 lg:h-[20rem] mt-10 left-10 rounded-lg shadow-lg object-cover"
         />
-        
         {/* Tombol Riwayat */}
-        <div className="absolute top-2 right-4 md:right-8">
+        <div className="absolute top-0 right-4 md:right-0">
           <Link
             to="/riwayat"
             className="bg-yellow-400 text-white py-2 px-4 rounded-lg hover:bg-yellow-500"

@@ -1,73 +1,74 @@
-// src/pages/EducationPage.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import ArticleCard from "../components/ArticleCard";
-import tani1 from "../assets/tani1.png";
-import tani2 from "../assets/tani2.png";
+import api from "../api"; 
 
 function EducationPage() {
-  const articles = [
-    {
-      id: 1,
-      title: "Cara Menanam Jagung: Langkah Perawatan Hingga Panen Jagung",
-      author: "Siti M",
-      date: "18 Januari 2024",
-      image: tani1,
-      categories: ["Budi Daya", "Informasi"]
-    },
-    {
-      id: 2,
-      title: "Budi Daya Jagung Berhasil",
-      author: "Chika",
-      date: "8 Juli 2023",
-      image: tani2,
-      categories: ["Budi Daya", "Informasi"]
-    },
-    {
-      id: 3,
-      title: "Apa Saja yang Dibutuhkan Agar Dapat Memanen Jagung dengan Maksimal",
-      author: "Dimas",
-      date: "1 Maret 2024",
-      image: tani1,
-      categories: ["Budi Daya", "Teknologi"]
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const fetchArticles = async () => {
+    try {
+      const response = await api.get("/articles");
+      setArticles(response.data);
+    } catch (error) {
+      console.error("Error fetching articles:", error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    fetchArticles();
+  }, []);
+
+  const filteredArticles = articles.filter((article) =>
+    article.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="container mx-auto p-6">
-      <h2 className="text-3xl font-bold text-green-700 mb-4">Edukasi &gt; Berdasarkan Kategori</h2>
-      
-      {/* Kategori dan Pencarian */}
-      <div className="flex justify-between mb-6">
-        <div className="flex flex-wrap gap-2">
-          {["Budi Daya", "Informasi", "Teknologi", "Berita"].map((category, index) => (
-            <span
-              key={index}
-              className="px-3 py-1 bg-green-100 text-green-600 text-sm font-semibold rounded-full cursor-pointer hover:bg-green-200"
-            >
-              {category}
-            </span>
-          ))}
-        </div>
+      {/* Header tanpa tombol tambah artikel */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold text-green-700">
+          Edukasi &gt; Berdasarkan Kategori
+        </h2>
+      </div>
+
+      {/* Pencarian */}
+      <div className="flex justify-between items-center mb-6">
         <input
           type="text"
-          placeholder="Cari artikel disini"
+          placeholder="Cari artikel di sini"
           className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
 
-      {/* Daftar Artikel */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {articles.map((article) => (
-          <ArticleCard
-            key={article.id}
-            image={article.image}
-            title={article.title}
-            author={article.author}
-            date={article.date}
-            categories={article.categories}
-          />
-        ))}
-      </div>
+      {/* Loading State */}
+      {loading ? (
+        <p className="text-center text-gray-500">Memuat artikel...</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredArticles.map((article) => (
+            <ArticleCard
+              key={article.id}
+              id={article.id}
+              image={article.image ? `http://localhost:3000${article.image}` : null}
+              title={article.title}
+              author={article.author}
+              date={new Date(article.date).toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+              categories={article.categories ? article.categories.split(",") : []}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
