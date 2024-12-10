@@ -1,26 +1,17 @@
 import React from "react";
 
-const getUserColor = (senderId) => {
-  const colors = ["#F87171", "#60A5FA", "#34D399", "#FBBF24", "#A78BFA", "#F472B6"];
-  return colors[senderId % colors.length];
-};
-
-const Message = ({ sender, content, isSender, senderId }) => {
-  const userColor = getUserColor(senderId); // Ambil warna berdasarkan sender_id
-
+const Message = ({ sender, content, isSender }) => {
   return (
     <div
-      className={`flex ${isSender ? "justify-end" : "justify-start"} mb-2`}
+      className={`flex ${isSender ? "justify-end" : "justify-start"} mb-4`}
     >
       <div
-        className={`p-2 rounded-lg max-w-xs`}
-        style={{
-          backgroundColor: isSender ? "#2563EB" : userColor, // Biru untuk pengirim, warna unik untuk penerima
-          color: isSender ? "#FFFFFF" : "#000000", // Teks putih untuk pengirim, hitam untuk penerima
-        }}
+        className={`p-3 rounded-xl max-w-md ${
+          isSender ? "bg-blue-500 text-white text-right" : "bg-gray-200 text-black text-left"
+        }`}
       >
-        {!isSender && <div className="font-bold mb-1">{sender}</div>}
-        <div>{content}</div>
+        {!isSender && <div className="font-bold text-sm mb-1">{sender}</div>}
+        <div className="text-sm">{content}</div>
       </div>
     </div>
   );
