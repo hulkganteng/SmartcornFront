@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Forum from "../assets/forum.png";
 
 function ForumPage() {
   return (
@@ -8,21 +9,14 @@ function ForumPage() {
       <p className="text-gray-700 mb-6">Diskusikan masalah tanaman jagungmu!</p>
 
       <div className="relative mb-6">
-        <img
-          src="../assets/tani2.png"
-          alt="Discussion group"
-          className="w-full rounded-lg shadow-lg"
+      <img
+          src={Forum}
+          alt="forum"
+          className="w-full h-80 md:h-96 lg:h-[20rem] mt-10 left-10 rounded-lg shadow-lg object-cover"
         />
       </div>
 
       <div className="space-y-4">
-        {/* Tombol masuk ke forum komunitas */}
-        <Link
-          to="/forum/community"
-          className="block text-center bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-semibold shadow-lg"
-        >
-          Masuk ke Forum Komunitas
-        </Link>
 
         {/* Tombol masuk ke halaman chat */}
         <Link
