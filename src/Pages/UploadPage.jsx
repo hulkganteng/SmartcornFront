@@ -51,7 +51,7 @@ function UploadPage() {
       setError(""); // Reset error saat upload dimulai
       setSuccess(""); // Reset success saat upload dimulai
 
-      const response = await fetch("http://localhost:3000/api/disease-detection/detect", {
+      const response = await fetch("http://smartconweb.my.id/api/v1/api/disease-detection/detect", {
         method: "POST",
         body: formData,
       });

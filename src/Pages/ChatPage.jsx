@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 import Message from "../components/Message";
 
-const socket = io("http://localhost:3000", {
+const socket = io("http://smartconweb.my.id/api/v1", {
   transports: ["websocket"],
   query: { token: localStorage.getItem("token") },
 });

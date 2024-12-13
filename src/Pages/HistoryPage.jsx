@@ -6,7 +6,7 @@ function HistoryPage() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/history");
+        const response = await fetch("http://smartconweb.my.id/api/v1/api/history");
         const data = await response.json();
         console.log("Data history yang diterima:", data);  // Debugging data yang diterima
         setHistory(data);
@@ -43,7 +43,7 @@ function HistoryPage() {
                     <td className="border-b px-4 py-2">{item.status}</td>
                     <td className="border-b px-4 py-2">
                       <img
-                        src={`http://localhost:3000/uploads/detection/${item.image}`} 
+                        src={`http://smartconweb.my.id/api/v1/uploads/detection/${item.image}`} 
                         alt="Tanaman"
                         className="w-24 h-24 object-cover"
                       />

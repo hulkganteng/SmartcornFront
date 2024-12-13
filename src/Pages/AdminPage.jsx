@@ -11,7 +11,7 @@ function AdminPage() {
     const fetchArticles = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:3000/api/articles", {
+        const response = await axios.get("http://smartconweb.my.id/api/v1/api/articles", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -34,7 +34,7 @@ function AdminPage() {
   const deleteArticle = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:3000/api/articles/${id}`, {
+      await axios.delete(`http://smartconweb.my.id/api/v1/api/articles/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

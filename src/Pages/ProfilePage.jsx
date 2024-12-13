@@ -45,7 +45,7 @@ function ProfilePage() {
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/auth/profile/${user.user_id}`, // Endpoint API
+        `http://smartconweb.my.id/api/v1/auth/profile/${user.user_id}`, // Endpoint API
         formData,
         {
           headers: {
@@ -87,7 +87,7 @@ function ProfilePage() {
           <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
             {user.photo ? (
               <img
-                src={`http://localhost:3000${user.photo}`} // Pastikan URL benar
+                src={`http://smartconweb.my.id/api/v1${user.photo}`} // Pastikan URL benar
                 alt="Foto Profil"
                 className="w-full h-full object-cover"
               />
