@@ -72,7 +72,11 @@ function ArticleDetailPage() {
       {/* Perbaiki gambar agar responsif dan tidak terlalu besar */}
       {article.image && (
         <img
-          src={`http://localhost:3000${article.image}`}
+         src={
+    article.image.startsWith('/uploads/')
+      ? `http://smartconweb.my.id:3000${article.image}` // Jika sudah ada /uploads/, gunakan langsung
+      : `http://smartconweb.my.id:3000/uploads/${article.image}` // Jika tidak ada, tambahkan prefix
+  }
           alt={article.title}
           className="w-1/2 mx-auto rounded-lg shadow-lg mb-6"  // Mengatur ukuran gambar dan meletakkannya di tengah
         />

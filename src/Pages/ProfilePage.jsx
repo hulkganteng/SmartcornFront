@@ -87,7 +87,12 @@ function ProfilePage() {
           <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
             {user.photo ? (
               <img
-                src={`http://smartconweb.my.id/api/v1${user.photo}`} // Pastikan URL benar
+              src={
+        user.photo.startsWith('/uploads/')
+          ? `http://smartconweb.my.id:3000${user.photo.replace(/\/{2,}/g, '/')}`
+          : `http://smartconweb.my.id:3000/uploads/profiles/${user.photo.replace(/\/{2,}/g, '/')}`
+      }
+       // Pastikan URL benar
                 alt="Foto Profil"
                 className="w-full h-full object-cover"
               />
