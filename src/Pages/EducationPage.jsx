@@ -56,7 +56,7 @@ function EducationPage() {
             <ArticleCard
               key={article.id}
               id={article.id}
-              image={article.image ? `http://smartconweb.my.id/api/v1${article.image}` : null}
+              image={article.image ? `http://smartconweb.my.id:3000/api/${article.image}` : null}
               title={article.title}
               author={article.author}
               date={new Date(article.date).toLocaleDateString("id-ID", {

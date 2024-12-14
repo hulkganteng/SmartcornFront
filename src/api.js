@@ -2,7 +2,7 @@ import axios from "axios";
 
 // API Utility
 const api = axios.create({
-  baseURL: "http://smartconweb.my.id/api/v1", // URL backend Anda
+  baseURL: "http://smartconweb.my.id:3000/api/", // URL backend Anda
   timeout: 10000, // Timeout request dalam milidetik
 });
 
