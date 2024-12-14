@@ -3,7 +3,8 @@ import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 import Message from "../components/Message";
 
-const socket = io("http://smartconweb.my.id/api/v1", {
+// Gantilah dengan URL WebSocket yang aman jika diperlukan
+const socket = io("https://smartconweb.my.id/api/", {
   transports: ["websocket"],
   query: { token: localStorage.getItem("token") },
 });
@@ -14,7 +15,6 @@ const ChatPage = () => {
   const [newMessage, setNewMessage] = useState("");
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
   const [inRoom, setInRoom] = useState(false); // State untuk menentukan apakah user sudah join room
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,6 +33,7 @@ const ChatPage = () => {
       setMessages(history);
     });
 
+    // Cleanup socket events saat komponen di-unmount
     return () => {
       socket.off("receive_message");
       socket.off("chat_history");
@@ -75,9 +76,7 @@ const ChatPage = () => {
 
       // Emit event untuk mengirim pesan ke server
       socket.emit("send_message", message);
-
-      // Jangan tambahkan pesan secara manual ke state
-      setNewMessage(""); // Reset input field
+      setNewMessage(""); // Reset input field setelah pesan terkirim
     }
   };
 
@@ -88,7 +87,7 @@ const ChatPage = () => {
     }
 
     if (window.confirm("Are you sure you want to delete the chat history for this room?")) {
-      fetch(`http://localhost:3000/api/chats/${roomId}`, {
+      fetch(`https://smartconweb.my.id/api/chats/${roomId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -112,7 +111,6 @@ const ChatPage = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-200">
-      {/* Header */}
       <header className="flex items-center justify-between bg-green-500 text-white px-6 py-3 shadow-md">
         <div>
           <h1 className="text-xl font-bold">{inRoom ? `Room: ${roomId}` : "Forum Komunitas"}</h1>
@@ -136,25 +134,23 @@ const ChatPage = () => {
         )}
       </header>
 
-      {/* Chat Content */}
       <div className="flex-1 overflow-y-auto p-4 bg-white">
-  {messages.length > 0 ? (
-    messages.map((msg, index) => (
-      <Message
-        key={index}
-        sender={msg.sender_id === user.user_id ? "You" : msg.sender_name} // Nama pengirim untuk penerima
-        content={msg.content}
-        isSender={msg.sender_id === user.user_id} // Tentukan apakah pesan dikirim oleh pengguna saat ini
-      />
-    ))
-  ) : (
-    <p className="text-center text-gray-500">
-      {inRoom ? "No messages yet. Start the conversation!" : "Join a room to see messages."}
-    </p>
-  )}
-</div>
+        {messages.length > 0 ? (
+          messages.map((msg, index) => (
+            <Message
+              key={index}
+              sender={msg.sender_id === user.user_id ? "You" : msg.sender_name}
+              content={msg.content}
+              isSender={msg.sender_id === user.user_id}
+            />
+          ))
+        ) : (
+          <p className="text-center text-gray-500">
+            {inRoom ? "No messages yet. Start the conversation!" : "Join a room to see messages."}
+          </p>
+        )}
+      </div>
 
-      {/* Input Section */}
       {inRoom ? (
         <footer className="bg-gray-100 px-4 py-3 flex items-center shadow-md">
           <input

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import api from "../api"; // Mengimpor instance api.js yang sudah dikonfigurasi
 import { useNavigate } from "react-router-dom";
 
 function UploadPage() {
@@ -51,19 +52,20 @@ function UploadPage() {
       setError(""); // Reset error saat upload dimulai
       setSuccess(""); // Reset success saat upload dimulai
 
-      const response = await fetch("http://smartconweb.my.id:3000/api/disease-detection/detect", {
-        method: "POST",
-        body: formData,
+      // Menggunakan API instance yang sudah ada
+      const response = await api.post("/disease-detection/detect", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
-      const result = await response.json();
       setLoading(false);
 
-      if (response.ok) {
+      if (response.status === 200) {
         setSuccess("Deteksi berhasil! Menampilkan hasil...");
-        navigate("/hasil", { state: { result: result } });
+        navigate("/hasil", { state: { result: response.data } });
       } else {
-        setError(result.message || "Terjadi kesalahan saat mengunggah gambar.");
+        setError(response.data.message || "Terjadi kesalahan saat mengunggah gambar.");
       }
     } catch (error) {
       setLoading(false);

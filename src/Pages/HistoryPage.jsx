@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from "react";
+import api from "../api";  // Mengimpor instance axios dari api.js
 
 function HistoryPage() {
   const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);  // Untuk mengelola status loading
+  const [error, setError] = useState(null);  // Untuk mengelola error
 
+  // Ambil data history dari API menggunakan axios
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await fetch("https://smartconweb.my.id/api/history"); // Endpoint history menggunakan HTTPS
-        const data = await response.json();
-        console.log("Data history yang diterima:", data); // Debugging data yang diterima
-        setHistory(data);
+        const response = await api.get("/history"); // Menggunakan axios instance untuk mendapatkan data
+        setHistory(response.data);  // Menyimpan data history ke dalam state
       } catch (error) {
-        console.error("Error fetching history:", error);
+        setError("Error fetching history: " + error.message);  // Mengatur error state jika terjadi error
+      } finally {
+        setLoading(false);  // Set loading ke false setelah request selesai
       }
     };
 
@@ -25,7 +29,12 @@ function HistoryPage() {
       <div className="bg-white border border-green-200 rounded-lg p-8 shadow-lg">
         <h3 className="text-lg font-semibold text-gray-700 mb-4">Riwayat Deteksi Anda</h3>
 
-        {history.length > 0 ? (
+        {/* Menangani loading dan error state */}
+        {loading ? (
+          <p className="text-gray-500">Memuat riwayat...</p>
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : history.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="min-w-full table-auto border-collapse">
               <thead>
@@ -43,7 +52,7 @@ function HistoryPage() {
                     <td className="border-b px-4 py-2">{item.status}</td>
                     <td className="border-b px-4 py-2">
                       <img
-                        src={`https://smartconweb.my.id/uploads/detection/${item.image}`} // Path gambar dengan HTTPS
+                        src={`https://smartconweb.my.id/uploads/detection/${item.image}`}  // Path gambar dengan HTTPS
                         alt="Tanaman"
                         className="w-24 h-24 object-cover"
                       />

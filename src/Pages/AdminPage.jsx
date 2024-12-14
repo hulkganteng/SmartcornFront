@@ -25,6 +25,7 @@ function AdminPage() {
       }
     } catch (error) {
       console.error("Error fetching articles:", error);
+      alert("Gagal mengambil artikel. Silakan coba lagi.");
     }
   };
 

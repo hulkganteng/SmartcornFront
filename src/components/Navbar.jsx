@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import api from "../api"; // Mengimpor instance API untuk mengubah foto profil
 
 function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null); // State untuk menyimpan data user
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false); // Untuk dropdown menu
+  const [newProfilePhoto, setNewProfilePhoto] = useState(null); // State untuk foto profil baru
 
   // Fungsi untuk memeriksa status login
   const checkLoginStatus = () => {
@@ -36,6 +38,32 @@ function Navbar() {
     localStorage.removeItem("user");
     window.dispatchEvent(new Event("storage")); // Trigger perubahan localStorage
     setDropdownOpen(false); // Tutup dropdown setelah logout
+  };
+
+  // Fungsi untuk mengganti foto profil
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("photo", file);
+
+      try {
+        const response = await api.post("/user/update-photo", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        if (response.status === 200) {
+          setUser({ ...user, photo: response.data.photo }); // Perbarui foto profil setelah upload
+          localStorage.setItem("user", JSON.stringify({ ...user, photo: response.data.photo })); // Simpan perubahan di localStorage
+          setSuccess("Foto profil berhasil diperbarui.");
+        }
+      } catch (error) {
+        console.error("Error updating profile photo:", error);
+        setError("Terjadi kesalahan saat mengubah foto profil.");
+      }
+    }
   };
 
   return (
@@ -90,11 +118,11 @@ function Navbar() {
                 {/* Foto Profil */}
                 {user?.photo ? (
                   <img
-                    src={`http://smartconweb.my.id:3000${user.photo}`} // API Endpoint yang sesuai
-                    alt="Foto Profil"
-                    className="w-8 h-8 rounded-full cursor-pointer"
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                  />
+                  src={`https://smartconweb.my.id:3000${user.photo}`} // API Endpoint dengan HTTPS
+                  alt="Foto Profil"
+                  className="w-8 h-8 rounded-full cursor-pointer"
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                />
                 ) : (
                   <div
                     className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white cursor-pointer"

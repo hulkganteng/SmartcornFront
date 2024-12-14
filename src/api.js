@@ -1,86 +1,133 @@
-import axios from "axios";
+import axios from 'axios';
 
-// API Utility
+// Setup axios instance
 const api = axios.create({
-  baseURL: "https://smartconweb.my.id/api/", // Pastikan menggunakan HTTPS
-  timeout: 10000, // Timeout request dalam milidetik
+  baseURL: 'https://smartconweb.my.id/api',  // Pastikan URL ini sesuai dengan backend API Anda
+  headers: {
+    'Content-Type': 'application/json',
+    // Tambahkan header lainnya jika diperlukan, seperti Authorization (Bearer token)
+  },
 });
 
-// Interceptor untuk menambahkan token autentikasi ke setiap request
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token"); // Mengambil token dari localStorage
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`; // Menambahkan Bearer token
-    }
-    return config;
-  },
-  (error) => {
-    // Tangani error pada interceptor request
-    console.error("Request error:", error);
-    return Promise.reject(error);
+// Fungsi untuk mengambil riwayat deteksi penyakit
+export const getHistory = async () => {
+  try {
+    const response = await api.get('/history');
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
   }
-);
+};
 
-// Interceptor untuk menangani error pada response
-api.interceptors.response.use(
-  (response) => response, // Jika response berhasil, kembalikan response
-  (error) => {
-    if (error.response) {
-      // Tangani error berdasarkan status HTTP
-      const status = error.response.status;
-      const message = error.response.data.message || "Server Error";
-
-      if (status === 401) {
-        alert("Sesi Anda telah berakhir. Silakan login kembali.");
-        localStorage.removeItem("token"); // Hapus token dari localStorage
-        window.location.href = "/login"; // Redirect ke halaman login
-      } else if (status === 403) {
-        alert("Anda tidak memiliki akses untuk melakukan tindakan ini.");
-      } else if (status === 500) {
-        alert("Terjadi kesalahan di server. Silakan coba lagi nanti.");
-      } else {
-        alert(`Terjadi kesalahan: ${message}`);
-      }
-    } else {
-      // Jika server tidak merespon atau terjadi kesalahan jaringan
-      alert("Tidak dapat terhubung ke server. Silakan coba lagi.");
-    }
-    console.error("Response error:", error);
-    return Promise.reject(error);
+// Fungsi untuk mendapatkan daftar artikel
+export const getArticles = async () => {
+  try {
+    const response = await api.get('/articles');
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
   }
-);
+};
+
+// Fungsi untuk mengupload artikel (hanya untuk admin)
+export const uploadArticle = async (data, token) => {
+  try {
+    const response = await api.post('/articles/upload', data, {
+      headers: {
+        Authorization: `Bearer ${token}`,  // Mengirim token JWT untuk autentikasi
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+// Fungsi untuk login
+export const login = async (credentials) => {
+  try {
+    const response = await api.post('/auth/login', credentials);
+    return response.data; // Mengembalikan data login yang berhasil (misalnya token)
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+// Fungsi untuk registrasi
+export const register = async (userData) => {
+  try {
+    const response = await api.post('/auth/register', userData);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+// Fungsi untuk mendapatkan profil pengguna berdasarkan ID
+export const getProfile = async (userId, token) => {
+  try {
+    const response = await api.get(`/auth/profile/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+// Fungsi untuk mengupdate profil pengguna
+export const updateProfile = async (userId, profileData, token) => {
+  try {
+    const response = await api.put(`/auth/profile/${userId}`, profileData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+// Fungsi untuk mengambil data forum (optional, jika dibutuhkan)
+export const getForums = async () => {
+  try {
+    const response = await api.get('/forums');
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+// Fungsi untuk mengirim pesan ke forum (optional, jika dibutuhkan)
+export const sendForumMessage = async (data, token) => {
+  try {
+    const response = await api.post('/forums/message', data, {
+      headers: {
+        Authorization: `Bearer ${token}`,  // Mengirim token JWT untuk autentikasi
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+// Fungsi untuk mengirim pesan chat (optional, jika dibutuhkan)
+export const sendMessage = async (data, token) => {
+  try {
+    const response = await api.post('/chats/send', data, {
+      headers: {
+        Authorization: `Bearer ${token}`,  // Mengirim token JWT untuk autentikasi
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
 
 export default api;
-
-// Berikut adalah contoh penggunaan endpoint API di aplikasi Anda
-
-// Endpoint untuk autentikasi
-export const loginUser = (credentials) => {
-  return api.post("/auth/login", credentials);
-};
-
-// Endpoint untuk mengambil artikel
-export const getArticles = () => {
-  return api.get("/articles");
-};
-
-// Endpoint untuk mengambil forum
-export const getForums = () => {
-  return api.get("/forums");
-};
-
-// Endpoint untuk chat
-export const sendMessage = (messageData) => {
-  return api.post("/chats/send", messageData); // Mengirim pesan ke server
-};
-
-// Endpoint untuk deteksi penyakit (misalnya di endpoint /disease-detection)
-export const detectDisease = (detectionData) => {
-  return api.post("/disease-detection", detectionData); // Kirim data deteksi penyakit
-};
-
-// Endpoint untuk mendapatkan history
-export const getHistory = () => {
-  return api.get("/history"); // Mengambil history
-};

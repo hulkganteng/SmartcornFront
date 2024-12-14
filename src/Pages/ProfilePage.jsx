@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api"; // Menggunakan instance axios dari api.js
 
 function ProfilePage() {
   const [user, setUser] = useState(null); // State untuk menyimpan data user
@@ -18,8 +18,8 @@ function ProfilePage() {
         if (!storedUser) throw new Error("User not logged in");
 
         const parsedUser = JSON.parse(storedUser);
-        const response = await axios.get(
-          `https://smartconweb.my.id/api/auth/profile/${parsedUser.user_id}` // Endpoint API dengan HTTPS
+        const response = await api.get(
+          `/auth/profile/${parsedUser.user_id}` // Menggunakan endpoint API dari api.js
         );
 
         const userData = response.data.user;
@@ -56,8 +56,8 @@ function ProfilePage() {
     }
 
     try {
-      const response = await axios.put(
-        `https://smartconweb.my.id/api/auth/profile/${user.user_id}`, // Endpoint API dengan HTTPS
+      const response = await api.put(
+        `/auth/profile/${user.user_id}`, // Menggunakan endpoint API dari api.js
         formData,
         {
           headers: {

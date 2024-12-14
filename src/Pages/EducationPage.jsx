@@ -1,69 +1,69 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ArticleCard from "../components/ArticleCard";
-import api from "../api";
+import { getArticles } from "../api"; // Import the function from api.js
 
 function EducationPage() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Fungsi untuk mengambil artikel dari API
+  // Function to fetch articles from the API
   const fetchArticles = async () => {
     try {
-      const response = await api.get("/articles"); // Memanggil endpoint API untuk mengambil artikel
-      setArticles(response.data); // Menyimpan data artikel yang diterima ke state
+      const response = await getArticles(); // Call the function from api.js to fetch articles
+      setArticles(response); // Store the received articles into state
     } catch (error) {
-      console.error("Error fetching articles:", error); // Menangani error saat pengambilan data
+      console.error("Error fetching articles:", error); // Handle error while fetching data
     } finally {
-      setLoading(false); // Mengubah status loading setelah pengambilan data selesai
+      setLoading(false); // Set loading to false once data is fetched or failed
     }
   };
 
-  // Mengambil artikel saat komponen pertama kali dimuat
+  // Fetch articles when the component mounts
   useEffect(() => {
     fetchArticles();
   }, []);
 
-  // Filter artikel berdasarkan query pencarian
+  // Filter articles based on the search query
   const filteredArticles = articles.filter((article) =>
-    article.title.toLowerCase().includes(searchQuery.toLowerCase()) // Filter artikel berdasarkan judul
+    article.title.toLowerCase().includes(searchQuery.toLowerCase()) // Filter by title
   );
 
   return (
     <div className="container mx-auto p-6">
-      {/* Header tanpa tombol tambah artikel */}
+      {/* Header without the 'Add Article' button */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-green-700">
           Edukasi &gt; Berdasarkan Kategori
         </h2>
       </div>
 
-      {/* Pencarian */}
+      {/* Search input */}
       <div className="flex justify-between items-center mb-6">
         <input
           type="text"
           placeholder="Cari artikel di sini"
           className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)} // Mengubah state searchQuery
+          onChange={(e) => setSearchQuery(e.target.value)} // Update the search query state
         />
       </div>
 
-      {/* Loading State */}
+      {/* Loading state */}
       {loading ? (
-        <p className="text-center text-gray-500">Memuat artikel...</p> // Menampilkan teks saat artikel sedang dimuat
+        <p className="text-center text-gray-500">Memuat artikel...</p> // Show loading message
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredArticles.length === 0 ? (
-            <p className="text-center text-gray-500">Tidak ada artikel yang ditemukan</p>
+            <p className="text-center text-gray-500">Tidak ada artikel yang ditemukan</p> // No articles found
           ) : (
             filteredArticles.map((article) => (
               <ArticleCard
                 key={article.id}
                 id={article.id}
                 image={article.image
-                  ? `https://smartconweb.my.id/uploads/${article.image.replace('uploads/', '')}` // Menggunakan URL yang benar untuk gambar
+                  ? `https://smartconweb.my.id/uploads/${article.image.replace('uploads/', '')}` // Proper image URL
                   : null}
                 title={article.title}
                 author={article.author}
@@ -72,7 +72,7 @@ function EducationPage() {
                   month: "long",
                   year: "numeric",
                 })}
-                categories={article.categories ? article.categories.split(",") : []} // Mengonversi kategori menjadi array
+                categories={article.categories ? article.categories.split(",") : []} // Split categories into an array
               />
             ))
           )}

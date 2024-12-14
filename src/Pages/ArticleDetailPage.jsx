@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import api from "../api";
+import axios from "axios";  // Menggunakan axios untuk panggilan API
 import DOMPurify from "dompurify"; // Mengimpor DOMPurify untuk sanitasi
+
+const API_BASE_URL = "https://smartconweb.my.id/api"; // Gunakan HTTPS yang benar
 
 function ArticleDetailPage() {
   const { id } = useParams(); // Ambil ID artikel dari URL
@@ -12,8 +14,10 @@ function ArticleDetailPage() {
   // Fungsi untuk mengambil artikel berdasarkan ID
   const fetchArticle = async () => {
     try {
-      console.log("Fetching article with ID:", id); // Debugging log
-      const response = await api.get(`/articles/${id}`); // Panggil endpoint API dengan ID dinamis
+      const token = localStorage.getItem("token"); // Ambil token dari localStorage
+      const response = await axios.get(`${API_BASE_URL}/articles/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }, // Header otorisasi
+      });
       setArticle(response.data); // Set data artikel ke state
       setLoading(false); // Matikan loading
     } catch (err) {

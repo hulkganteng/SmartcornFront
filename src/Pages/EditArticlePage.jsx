@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import { getArticleById, updateArticle } from "../api"; // Import from api.js
 
 function EditArticlePage() {
   const [article, setArticle] = useState({
@@ -13,15 +13,13 @@ function EditArticlePage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Ambil data artikel berdasarkan ID
+  // Fetch article data by ID
   useEffect(() => {
     const fetchArticle = async () => {
       try {
-        const token = localStorage.getItem("token"); // Ambil token dari localStorage
-        const response = await axios.get(`https://smartconweb.my.id/api/articles/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }, // Tambahkan header Authorization
-        });
-        setArticle(response.data);
+        const token = localStorage.getItem("token"); // Get token from localStorage
+        const articleData = await getArticleById(id, token);
+        setArticle(articleData);
       } catch (error) {
         console.error("Error fetching article:", error);
       }
@@ -29,33 +27,20 @@ function EditArticlePage() {
     fetchArticle();
   }, [id]);
 
-  // Handle perubahan form
+  // Handle form changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setArticle((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle submit form
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formData = new FormData();
-    formData.append("title", article.title);
-    formData.append("content", article.content);
-    formData.append("author", article.author);
-    formData.append("categories", article.categories);
-    if (image) formData.append("image", image);
-
     try {
-      const token = localStorage.getItem("token"); // Ambil token dari localStorage
-      await axios.put(`https://smartconweb.my.id/api/articles/${id}`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Tambahkan header Authorization
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const token = localStorage.getItem("token"); // Get token from localStorage
+      await updateArticle(id, { ...article, image }, token);
       alert("Artikel berhasil diperbarui!");
-      navigate("/admin"); // Kembali ke halaman admin setelah berhasil
+      navigate("/admin"); // Navigate to admin page after success
     } catch (error) {
       console.error("Error updating article:", error);
       alert("Gagal memperbarui artikel. Silakan coba lagi.");
