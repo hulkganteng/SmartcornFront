@@ -3,7 +3,12 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 
 function EditArticlePage() {
-  const [article, setArticle] = useState({ title: "", content: "", author: "", categories: "" });
+  const [article, setArticle] = useState({
+    title: "",
+    content: "",
+    author: "",
+    categories: "",
+  });
   const [image, setImage] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -12,7 +17,10 @@ function EditArticlePage() {
   useEffect(() => {
     const fetchArticle = async () => {
       try {
-        const response = await axios.get(`/api/articles/${id}`);
+        const token = localStorage.getItem("token"); // Ambil token dari localStorage
+        const response = await axios.get(`http://smartconweb.my.id/api/articles/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }, // Tambahkan header Authorization
+        });
         setArticle(response.data);
       } catch (error) {
         console.error("Error fetching article:", error);
@@ -39,10 +47,18 @@ function EditArticlePage() {
     if (image) formData.append("image", image);
 
     try {
-      await axios.put(`/api/articles/${id}`, formData);
+      const token = localStorage.getItem("token"); // Ambil token dari localStorage
+      await axios.put(`http://smartconweb.my.id/api/articles/${id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Tambahkan header Authorization
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      alert("Artikel berhasil diperbarui!");
       navigate("/admin"); // Kembali ke halaman admin setelah berhasil
     } catch (error) {
       console.error("Error updating article:", error);
+      alert("Gagal memperbarui artikel. Silakan coba lagi.");
     }
   };
 
@@ -51,7 +67,9 @@ function EditArticlePage() {
       <h2 className="text-2xl font-semibold mb-4">Edit Artikel</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="title" className="block text-sm font-medium">Judul</label>
+          <label htmlFor="title" className="block text-sm font-medium">
+            Judul
+          </label>
           <input
             type="text"
             id="title"
@@ -62,7 +80,9 @@ function EditArticlePage() {
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="content" className="block text-sm font-medium">Konten</label>
+          <label htmlFor="content" className="block text-sm font-medium">
+            Konten
+          </label>
           <textarea
             id="content"
             name="content"
@@ -73,7 +93,9 @@ function EditArticlePage() {
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="author" className="block text-sm font-medium">Penulis</label>
+          <label htmlFor="author" className="block text-sm font-medium">
+            Penulis
+          </label>
           <input
             type="text"
             id="author"
@@ -84,7 +106,9 @@ function EditArticlePage() {
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="categories" className="block text-sm font-medium">Kategori</label>
+          <label htmlFor="categories" className="block text-sm font-medium">
+            Kategori
+          </label>
           <input
             type="text"
             id="categories"
@@ -95,7 +119,9 @@ function EditArticlePage() {
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="image" className="block text-sm font-medium">Gambar</label>
+          <label htmlFor="image" className="block text-sm font-medium">
+            Gambar
+          </label>
           <input
             type="file"
             id="image"
