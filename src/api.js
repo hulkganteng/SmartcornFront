@@ -130,4 +130,25 @@ export const sendMessage = async (data, token) => {
   }
 };
 
+// Fungsi getArticleById
+export const getArticleById = (id) => {
+  return fetch(`https://smartconweb.my.id/api/articles/${id}`)
+    .then(response => response.json())
+    .then(data => data)
+    .catch(error => console.error('Error fetching article:', error));
+};
+
+// Fungsi updateArticle
+export const updateArticle = (id, updatedData) => {
+  return fetch(`https://smartconweb.my.id/api/articles/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(updatedData),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(response => response.json())
+    .catch(error => console.error('Error updating article:', error));
+};
+
 export default api;
