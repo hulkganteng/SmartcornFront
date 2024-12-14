@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function AdminPage() {
   const [articles, setArticles] = useState([]); // State untuk menyimpan daftar artikel
+  const navigate = useNavigate(); // Hook untuk navigasi
 
   // Fungsi untuk mengambil data artikel langsung dari database
   const fetchArticles = async () => {
@@ -24,6 +26,23 @@ function AdminPage() {
     }
   };
 
+  // Fungsi untuk menghapus artikel
+  const deleteArticle = async (id) => {
+    try {
+      const token = localStorage.getItem("token"); // Ambil token untuk otorisasi
+      await axios.delete(`http://smartconweb.my.id:3000/api/articles/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }, // Header otorisasi
+      });
+
+      // Refresh data artikel setelah menghapus
+      setArticles((prevArticles) => prevArticles.filter((article) => article.id !== id));
+      alert("Artikel berhasil dihapus!");
+    } catch (error) {
+      console.error("Error deleting article:", error);
+      alert("Gagal menghapus artikel. Silakan coba lagi.");
+    }
+  };
+
   // Ambil data artikel saat komponen di-mount
   useEffect(() => {
     fetchArticles();
@@ -33,7 +52,7 @@ function AdminPage() {
     <div className="container mx-auto p-4">
       <h2 className="text-2xl font-semibold mb-4">Admin Dashboard</h2>
       <button
-        onClick={() => navigate("/add-article")}
+        onClick={() => navigate("/add-article")} // Navigasi ke halaman tambah artikel
         className="bg-green-600 text-white py-2 px-4 rounded mb-4"
       >
         Tambah Artikel
@@ -48,27 +67,39 @@ function AdminPage() {
           </tr>
         </thead>
         <tbody>
-          {articles.map((article, index) => (
-            <tr key={article.id}>
-              <td className="py-2 px-4 border-b">{index + 1}</td>
-              <td className="py-2 px-4 border-b">{article.title}</td>
-              <td className="py-2 px-4 border-b">{article.author}</td>
-              <td className="py-2 px-4 border-b">
-                <button
-                  onClick={() => navigate(`/admin/edit-article/${article.id}`)}
-                  className="text-blue-600 hover:text-blue-800 mr-2"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => deleteArticle(article.id)}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  Hapus
-                </button>
+          {articles.length > 0 ? (
+            articles.map((article, index) => (
+              <tr key={article.id}>
+                <td className="py-2 px-4 border-b">{index + 1}</td>
+                <td className="py-2 px-4 border-b">{article.title}</td>
+                <td className="py-2 px-4 border-b">{article.author}</td>
+                <td className="py-2 px-4 border-b">
+                  <button
+                    onClick={() => navigate(`/admin/edit-article/${article.id}`)} // Navigasi ke halaman edit
+                    className="text-blue-600 hover:text-blue-800 mr-2"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (window.confirm("Apakah Anda yakin ingin menghapus artikel ini?")) {
+                        deleteArticle(article.id);
+                      }
+                    }}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    Hapus
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="4" className="text-center py-4">
+                Tidak ada artikel yang tersedia.
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>
