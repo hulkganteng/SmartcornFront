@@ -11,7 +11,7 @@ function AdminPage() {
     const fetchArticles = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://smartconweb.my.id/api/v1/api/articles", {
+        const response = await axios.get("http://smartconweb.my.id/api/articles", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -34,7 +34,7 @@ function AdminPage() {
   const deleteArticle = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://smartconweb.my.id/api/v1/api/articles/${id}`, {
+      await axios.delete(`http://smartconweb.my.id/api/articles/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -49,7 +49,7 @@ function AdminPage() {
     <div className="container mx-auto p-4">
       <h2 className="text-2xl font-semibold mb-4">Admin Dashboard</h2>
       <button
-        onClick={() => navigate("/add-article")}
+        onClick={() => navigate("/admin/add-article")}
         className="bg-green-600 text-white py-2 px-4 rounded mb-4"
       >
         Tambah Artikel
