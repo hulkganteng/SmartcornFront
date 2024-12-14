@@ -90,7 +90,7 @@ function Navbar() {
                 {/* Foto Profil */}
                 {user?.photo ? (
                   <img
-                    src={`http://localhost:3000${user.photo}`}
+                    src={`http://smartconweb.my.id:3000${user.photo}`}
                     alt="Foto Profil"
                     className="w-8 h-8 rounded-full cursor-pointer"
                     onClick={() => setDropdownOpen(!dropdownOpen)}
