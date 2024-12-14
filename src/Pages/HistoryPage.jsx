@@ -6,9 +6,9 @@ function HistoryPage() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await fetch("http://smartconweb.my.id/api/v1/api/history");
+        const response = await fetch("http://smartconweb.my.id:3000/api/history"); // Endpoint history
         const data = await response.json();
-        console.log("Data history yang diterima:", data);  // Debugging data yang diterima
+        console.log("Data history yang diterima:", data); // Debugging data yang diterima
         setHistory(data);
       } catch (error) {
         console.error("Error fetching history:", error);
@@ -43,13 +43,12 @@ function HistoryPage() {
                     <td className="border-b px-4 py-2">{item.status}</td>
                     <td className="border-b px-4 py-2">
                       <img
-                        src={`http://smartconweb.my.id/api/v1/uploads/detection/${item.image}`} 
+                        src={`http://smartconweb.my.id:3000/uploads/detection/${item.image}`} // Path gambar dari backend
                         alt="Tanaman"
                         className="w-24 h-24 object-cover"
                       />
                     </td>
                     <td className="border-b px-4 py-2">
-                      {/* Periksa apakah handling_tip ada dan formatnya benar */}
                       {item.handling_tip ? (
                         Array.isArray(item.handling_tip) ? (
                           item.handling_tip.length > 0 ? (
