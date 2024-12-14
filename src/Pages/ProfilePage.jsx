@@ -10,29 +10,41 @@ function ProfilePage() {
   const [newPhoto, setNewPhoto] = useState(null); // State untuk file foto baru
   const [isEditing, setIsEditing] = useState(false); // State untuk modal edit
 
-  // Ambil data user dari localStorage saat komponen di-mount
+  // Fungsi untuk mengambil data user
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser); // Parsing data user dari string JSON
-      setEditData({
-        first_name: parsedUser.first_name,
-        last_name: parsedUser.last_name,
-      }); // Set default form nama
-    }
+    const fetchUser = async () => {
+      try {
+        const storedUser = localStorage.getItem("user");
+        if (!storedUser) throw new Error("User not logged in");
+
+        const parsedUser = JSON.parse(storedUser);
+        const response = await axios.get(
+          `http://smartconweb.my.id:3000/api/auth/profile/${parsedUser.user_id}` // Ganti endpoint sesuai backend
+        );
+
+        const userData = response.data.user;
+
+        // Perbaiki path foto profil jika diperlukan
+        if (userData.photo) {
+          userData.photo = userData.photo.startsWith('/uploads/profiles/')
+            ? userData.photo // Path sudah benar
+            : `/uploads/profiles/${userData.photo}`; // Tambahkan prefix jika hanya nama file
+        }
+
+        setUser(userData); // Simpan data user ke state
+        setEditData({
+          first_name: userData.first_name,
+          last_name: userData.last_name,
+        });
+
+        localStorage.setItem("user", JSON.stringify(userData)); // Simpan ke localStorage
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUser();
   }, []);
-
-  // Fungsi untuk menangani perubahan input
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
-  // Fungsi untuk menangani perubahan file foto
-  const handleFileChange = (e) => {
-    setNewPhoto(e.target.files[0]); // Simpan file ke state
-  };
 
   // Fungsi untuk menyimpan perubahan profil
   const handleSaveProfile = async () => {
@@ -45,7 +57,7 @@ function ProfilePage() {
 
     try {
       const response = await axios.put(
-        `http://smartconweb.my.id/api/v1/auth/profile/${user.user_id}`, // Endpoint API
+        `http://smartconweb.my.id:3000/api/auth/profile/${user.user_id}`, // Ganti endpoint sesuai backend
         formData,
         {
           headers: {
@@ -54,11 +66,18 @@ function ProfilePage() {
         }
       );
 
-      // Perbarui data user dengan respons API
       const updatedUser = response.data.user;
-      setUser(updatedUser);
+
+      // Perbaiki path foto profil jika diperlukan
+      if (updatedUser.photo) {
+        updatedUser.photo = updatedUser.photo.startsWith('/uploads/profiles/')
+          ? updatedUser.photo // Path sudah benar
+          : `/uploads/profiles/${updatedUser.photo}`; // Tambahkan prefix jika hanya nama file
+      }
+
+      setUser(updatedUser); // Perbarui state user
       localStorage.setItem("user", JSON.stringify(updatedUser)); // Simpan ke localStorage
-      setIsEditing(false); // Tutup modal
+      setIsEditing(false); // Tutup modal edit
       alert("Profil berhasil diperbarui!");
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -77,33 +96,25 @@ function ProfilePage() {
     );
   }
 
-  // Jika user sudah login, tampilkan data profil
   return (
     <div className="container mx-auto p-6">
       <div className="bg-white shadow-lg rounded-lg p-6 max-w-3xl mx-auto">
         {/* Header Profil */}
         <div className="flex items-center mb-6">
-          {/* Avatar */}
           <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
             {user.photo ? (
               <img
-              src={
-        user.photo.startsWith('/uploads/')
-          ? `http://smartconweb.my.id:3000${user.photo.replace(/\/{2,}/g, '/')}`
-          : `http://smartconweb.my.id:3000/uploads/profiles/${user.photo.replace(/\/{2,}/g, '/')}`
-      }
-       // Pastikan URL benar
+                src={`http://smartconweb.my.id:3000${user.photo}`} // Gunakan path foto yang benar
                 alt="Foto Profil"
                 className="w-full h-full object-cover"
               />
             ) : (
               <span className="text-3xl font-bold text-green-500">
                 {user.first_name[0]}
-                {user.last_name[0]} {/* Inisial Nama */}
+                {user.last_name[0]}
               </span>
             )}
           </div>
-          {/* Informasi Nama dan Email */}
           <div className="ml-4">
             <h2 className="text-2xl font-bold text-gray-800">
               {user.first_name} {user.last_name}
@@ -112,7 +123,6 @@ function ProfilePage() {
           </div>
         </div>
 
-        {/* Tombol Aksi */}
         <div className="flex justify-end">
           <button
             onClick={() => setIsEditing(true)}
@@ -123,7 +133,7 @@ function ProfilePage() {
         </div>
       </div>
 
-      {/* Modal untuk Edit Profil */}
+      {/* Modal Edit Profil */}
       {isEditing && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
@@ -138,7 +148,7 @@ function ProfilePage() {
                 type="text"
                 name="first_name"
                 value={editData.first_name}
-                onChange={handleInputChange}
+                onChange={(e) => setEditData({ ...editData, first_name: e.target.value })}
                 className="border border-gray-300 rounded-lg p-2 w-full"
               />
             </div>
@@ -150,7 +160,7 @@ function ProfilePage() {
                 type="text"
                 name="last_name"
                 value={editData.last_name}
-                onChange={handleInputChange}
+                onChange={(e) => setEditData({ ...editData, last_name: e.target.value })}
                 className="border border-gray-300 rounded-lg p-2 w-full"
               />
             </div>
@@ -161,7 +171,7 @@ function ProfilePage() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleFileChange}
+                onChange={(e) => setNewPhoto(e.target.files[0])}
                 className="border border-gray-300 rounded-lg p-2 w-full"
               />
             </div>
