@@ -26,7 +26,7 @@ function HasilPage() {
           {/* Menampilkan gambar tanaman */}
           <div className="mt-4">
             <img
-              src={`http://smartconweb.my.id:3000${result.image}`} // Path gambar dari backend
+              src={`https://smartconweb.my.id${result.image}`} // Path gambar dari backend, pastikan menggunakan https dan tidak ada port (seperti :3000)
               alt="Tanaman Jagung"
               className="w-full h-80 md:h-96 lg:h-[20rem] rounded-lg shadow-lg object-cover"
             />

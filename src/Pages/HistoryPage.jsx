@@ -6,7 +6,7 @@ function HistoryPage() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await fetch("http://smartconweb.my.id:3000/api/history"); // Endpoint history
+        const response = await fetch("https://smartconweb.my.id/api/history"); // Endpoint history menggunakan HTTPS
         const data = await response.json();
         console.log("Data history yang diterima:", data); // Debugging data yang diterima
         setHistory(data);
@@ -43,7 +43,7 @@ function HistoryPage() {
                     <td className="border-b px-4 py-2">{item.status}</td>
                     <td className="border-b px-4 py-2">
                       <img
-                        src={`http://smartconweb.my.id:3000/uploads/detection/${item.image}`} // Path gambar dari backend
+                        src={`https://smartconweb.my.id/uploads/detection/${item.image}`} // Path gambar dengan HTTPS
                         alt="Tanaman"
                         className="w-24 h-24 object-cover"
                       />

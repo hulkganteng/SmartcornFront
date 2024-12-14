@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const API_BASE_URL = "https://smartconweb.my.id/api"; // Gunakan HTTPS yang benar
+
 function AdminPage() {
   const [articles, setArticles] = useState([]); // State untuk menyimpan daftar artikel
   const navigate = useNavigate(); // Hook untuk navigasi
@@ -10,7 +12,7 @@ function AdminPage() {
   const fetchArticles = async () => {
     try {
       const token = localStorage.getItem("token"); // Ambil token dari localStorage
-      const response = await axios.get("http://smartconweb.my.id:3000/api/articles", {
+      const response = await axios.get(`${API_BASE_URL}/articles`, {
         headers: { Authorization: `Bearer ${token}` }, // Header otorisasi
       });
 
@@ -30,7 +32,7 @@ function AdminPage() {
   const deleteArticle = async (id) => {
     try {
       const token = localStorage.getItem("token"); // Ambil token untuk otorisasi
-      await axios.delete(`http://smartconweb.my.id:3000/api/articles/${id}`, {
+      await axios.delete(`${API_BASE_URL}/articles/${id}`, {
         headers: { Authorization: `Bearer ${token}` }, // Header otorisasi
       });
 

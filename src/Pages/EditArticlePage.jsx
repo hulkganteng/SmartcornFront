@@ -18,7 +18,7 @@ function EditArticlePage() {
     const fetchArticle = async () => {
       try {
         const token = localStorage.getItem("token"); // Ambil token dari localStorage
-        const response = await axios.get(`http://smartconweb.my.id/api/articles/${id}`, {
+        const response = await axios.get(`https://smartconweb.my.id/api/articles/${id}`, {
           headers: { Authorization: `Bearer ${token}` }, // Tambahkan header Authorization
         });
         setArticle(response.data);
@@ -48,7 +48,7 @@ function EditArticlePage() {
 
     try {
       const token = localStorage.getItem("token"); // Ambil token dari localStorage
-      await axios.put(`http://smartconweb.my.id/api/articles/${id}`, formData, {
+      await axios.put(`https://smartconweb.my.id/api/articles/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`, // Tambahkan header Authorization
           "Content-Type": "multipart/form-data",
@@ -77,6 +77,7 @@ function EditArticlePage() {
             value={article.title}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
+            required
           />
         </div>
         <div className="mb-4">
@@ -90,6 +91,7 @@ function EditArticlePage() {
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
             rows="5"
+            required
           />
         </div>
         <div className="mb-4">
@@ -103,6 +105,7 @@ function EditArticlePage() {
             value={article.author}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
+            required
           />
         </div>
         <div className="mb-4">
@@ -116,6 +119,7 @@ function EditArticlePage() {
             value={article.categories}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
+            required
           />
         </div>
         <div className="mb-4">

@@ -19,7 +19,7 @@ function ProfilePage() {
 
         const parsedUser = JSON.parse(storedUser);
         const response = await axios.get(
-          `http://smartconweb.my.id:3000/api/auth/profile/${parsedUser.user_id}` // Ganti endpoint sesuai backend
+          `https://smartconweb.my.id/api/auth/profile/${parsedUser.user_id}` // Endpoint API dengan HTTPS
         );
 
         const userData = response.data.user;
@@ -57,7 +57,7 @@ function ProfilePage() {
 
     try {
       const response = await axios.put(
-        `http://smartconweb.my.id:3000/api/auth/profile/${user.user_id}`, // Ganti endpoint sesuai backend
+        `https://smartconweb.my.id/api/auth/profile/${user.user_id}`, // Endpoint API dengan HTTPS
         formData,
         {
           headers: {
@@ -104,7 +104,7 @@ function ProfilePage() {
           <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
             {user.photo ? (
               <img
-                src={`http://smartconweb.my.id:3000${user.photo}`} // Gunakan path foto yang benar
+                src={`https://smartconweb.my.id${user.photo}`} // Gunakan path foto yang benar dengan HTTPS
                 alt="Foto Profil"
                 className="w-full h-full object-cover"
               />

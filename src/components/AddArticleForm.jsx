@@ -43,7 +43,8 @@ function AddArticleForm() {
     }
 
     try {
-      await api.post("/articles/upload", data, {
+      // Gantilah /api/articles dengan endpoint API yang benar
+      await api.post("/api/articles", data, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`, // Gunakan template literal

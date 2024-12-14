@@ -3,16 +3,19 @@ import React, { useState } from "react";
 const EditForm = ({ article, onArticleUpdate }) => {
   const [title, setTitle] = useState(article.title);
   const [content, setContent] = useState(article.content);
+  const [loading, setLoading] = useState(false); // Loading state
+  const [error, setError] = useState(null); // Error state
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading
 
-    // Kirim data yang diperbarui ke server
     try {
       const response = await fetch(`/api/articles/${article.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`, // Add token if required
         },
         body: JSON.stringify({ title, content }),
       });
@@ -22,14 +25,18 @@ const EditForm = ({ article, onArticleUpdate }) => {
       }
 
       const updatedArticle = await response.json();
-      onArticleUpdate(updatedArticle); // Panggil callback untuk pembaruan di parent component
+      onArticleUpdate(updatedArticle); // Notify parent component
+      setError(null); // Reset error if successful
     } catch (error) {
-      console.error("Error updating article:", error);
+      setError("Error updating article: " + error.message); // Set error message
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {error && <div className="text-red-600">{error}</div>} {/* Display error message */}
       <div>
         <label htmlFor="title" className="block font-semibold">Title</label>
         <input
@@ -56,8 +63,9 @@ const EditForm = ({ article, onArticleUpdate }) => {
         <button
           type="submit"
           className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md"
+          disabled={loading} // Disable button while loading
         >
-          Update Article
+          {loading ? "Updating..." : "Update Article"} {/* Show loading text */}
         </button>
       </div>
     </form>
