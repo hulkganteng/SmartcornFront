@@ -43,16 +43,16 @@ function AddArticleForm() {
     }
 
     try {
-      // Gantilah /api/articles dengan endpoint API yang benar
-      await api.post("/api/articles", data, {
+      // API Endpoint yang benar (untuk unggah artikel)
+      await api.post("/articles/upload", data, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // Gunakan template literal
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // Pastikan token valid
         },
       });
 
       alert("Artikel berhasil diunggah!");
-      
+
       // Reset form setelah berhasil
       setFormData({
         title: "",
@@ -66,8 +66,11 @@ function AddArticleForm() {
       navigate("/edukasi"); // Menggunakan useNavigate untuk kembali ke halaman EducationPage
 
     } catch (error) {
-      console.error("Error uploading article:", error);
-      alert("Gagal mengunggah artikel!");
+      console.error("Error uploading article:", error.response || error.message);
+      alert(
+        error.response?.data?.message ||
+          "Gagal mengunggah artikel! Periksa koneksi dan coba lagi."
+      );
     }
   };
 

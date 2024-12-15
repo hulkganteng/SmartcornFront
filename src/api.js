@@ -165,5 +165,4 @@ export const detectDisease = async (formData) => {
   }
 };
 
-
 export default api;
