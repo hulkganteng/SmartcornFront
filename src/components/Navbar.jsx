@@ -1,190 +1,218 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import api from "../api"; // Mengimpor instance API untuk mengubah foto profil
+import api from "../api";
 
 function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null); // State untuk menyimpan data user
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false); // Untuk dropdown menu
-  const [newProfilePhoto, setNewProfilePhoto] = useState(null); // State untuk foto profil baru
-
-  // Fungsi untuk memeriksa status login
-  const checkLoginStatus = () => {
-    const token = localStorage.getItem("token");
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    setIsLoggedIn(!!token); // Jika token ada, set isLoggedIn menjadi true
-    if (storedUser) {
-      setUser(storedUser); // Set data user dari localStorage
-    }
-  };
+  const [user, setUser] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false); // Dropdown Foto Profil
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Sidebar Mobile
 
   useEffect(() => {
-    // Periksa status login saat pertama kali render
-    checkLoginStatus();
-
-    // Tambahkan event listener untuk mendeteksi perubahan localStorage
-    const handleStorageChange = () => checkLoginStatus();
-    window.addEventListener("storage", handleStorageChange);
-
-    // Cleanup event listener saat komponen di-unmount
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
+    const token = localStorage.getItem("token");
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    setIsLoggedIn(!!token);
+    if (storedUser) setUser(storedUser);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    window.dispatchEvent(new Event("storage")); // Trigger perubahan localStorage
-    setDropdownOpen(false); // Tutup dropdown setelah logout
-  };
-
-  // Fungsi untuk mengganti foto profil
-  const handlePhotoChange = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append("photo", file);
-
-      try {
-        const response = await api.post("/user/update-photo", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-
-        if (response.status === 200) {
-          setUser({ ...user, photo: response.data.photo }); // Perbarui foto profil setelah upload
-          localStorage.setItem("user", JSON.stringify({ ...user, photo: response.data.photo })); // Simpan perubahan di localStorage
-          setSuccess("Foto profil berhasil diperbarui.");
-        }
-      } catch (error) {
-        console.error("Error updating profile photo:", error);
-        setError("Terjadi kesalahan saat mengubah foto profil.");
-      }
-    }
+    window.location.reload();
   };
 
   return (
-    <nav className="bg-yellow-50 shadow-md py-4 px-6">
-      <div className="container mx-auto flex items-center justify-between">
-        {/* Bagian Kiri: Logo */}
-        <div className="flex items-center space-x-8">
-          <Link to="/" className="text-2xl font-bold text-black">
-            Smart <span className="font-normal">Corn</span>
-          </Link>
+    <>
+      {/* Navbar Utama */}
+      <nav className="bg-yellow-50 shadow-md py-4 px-6">
+        <div className="container mx-auto flex items-center justify-between">
+          {/* Kiri: Menu Navigasi */}
+          <div className="flex items-center space-x-8">
+            <Link to="/" className="text-2xl font-bold text-black">
+              Smart <span className="font-normal">Corn</span>
+            </Link>
+            <div className="hidden md:flex space-x-6 text-black font-semibold">
+              <Link to="/deteksi-penyakit" className="hover:text-slate-300 transition">
+                Deteksi Penyakit
+              </Link>
+              <Link to="/edukasi" className="hover:text-slate-300 transition">
+                Edukasi
+              </Link>
+              <Link to="/forum" className="hover:text-slate-300 transition">
+                Forum
+              </Link>
+            </div>
+          </div>
 
-          {/* Menu Navigasi - Tampilan Desktop */}
-          <div className="hidden md:flex space-x-6 text-black font-semibold">
-            <Link to="/deteksi-penyakit" className="hover:text-slate-300 transition duration-200">
-              Deteksi Penyakit
-            </Link>
-            <Link to="/edukasi" className="hover:text-slate-300 transition duration-200">
-              Edukasi
-            </Link>
-            <Link to="/forum" className="hover:text-slate-300 transition duration-200">
-              Forum
-            </Link>
+          {/* Kanan: Hai User, Halaman Admin, Foto Profil */}
+          <div className="hidden md:flex items-center space-x-6">
+            {isLoggedIn ? (
+              <>
+                {/* Halaman Admin */}
+                {user?.role === "admin" && (
+                  <Link
+                    to="/admin"
+                    className="bg-yellow-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-yellow-600 transition"
+                  >
+                    Halaman Admin
+                  </Link>
+                )}
+
+                {/* Hai User */}
+                <span className="text-green-600 font-semibold">
+                  Hai, {user?.first_name || "User"}
+                </span>
+
+                {/* Foto Profil (Path Berbeda untuk Development) */}
+                <div className="relative">
+                  <img
+                    src={
+                      user?.photo
+                        ? `http://localhost:3000/uploads/profiles/${user.photo}`
+                        : "http://localhost:3000/uploads/default.png"
+                    }
+                    alt="Foto Profil"
+                    className="w-8 h-8 rounded-full cursor-pointer"
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                  />
+                  {/* Dropdown Menu */}
+                  {dropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-md z-50">
+                      <Link
+                        to="/profile"
+                        className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        Edit Profil
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-green-600 hover:text-green-800 font-medium"
+                >
+                  Masuk
+                </Link>
+                <Link
+                  to="/register"
+                  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                >
+                  Daftar
+                </Link>
+              </>
+            )}
+          </div>
+
+          {/* Burger Menu Mobile */}
+          <div className="md:hidden flex items-center">
+            <button onClick={() => setSidebarOpen(true)} className="text-3xl">
+              ☰
+            </button>
           </div>
         </div>
+      </nav>
 
-        {/* Hamburger Menu untuk Mobile */}
-        <div className="md:hidden flex items-center" onClick={() => setMenuOpen(!menuOpen)}>
-          <span className="text-3xl">☰</span>
-        </div>
+      {/* Sidebar Mobile */}
+      {sidebarOpen && (
+        <div className="fixed top-0 left-0 w-3/4 h-full bg-white shadow-lg z-50">
+          <div className="p-4 flex justify-between items-center border-b">
+            <h2 className="text-2xl font-bold text-green-600">Menu</h2>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="text-3xl text-red-500"
+            >
+              &times;
+            </button>
+          </div>
 
-        {/* Bagian Kanan: Tombol Login/Daftar atau Profil */}
-        <div className="relative flex items-center space-x-6">
-          {isLoggedIn ? (
-            <>
-              {/* Tombol untuk Admin */}
-              {user?.role === "admin" && (
+          {/* Sidebar Links */}
+          <ul className="p-4 space-y-4">
+            <li>
+              <Link
+                to="/deteksi-penyakit"
+                className="text-gray-700 text-lg hover:text-green-600"
+                onClick={() => setSidebarOpen(false)}
+              >
+                Deteksi Penyakit
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/edukasi"
+                className="text-gray-700 text-lg hover:text-green-600"
+                onClick={() => setSidebarOpen(false)}
+              >
+                Edukasi
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/forum"
+                className="text-gray-700 text-lg hover:text-green-600"
+                onClick={() => setSidebarOpen(false)}
+              >
+                Forum
+              </Link>
+            </li>
+            {isLoggedIn && user?.role === "admin" && (
+              <li>
                 <Link
                   to="/admin"
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded transition duration-200 font-semibold text-xs sm:text-sm"
+                  className="text-gray-700 text-lg hover:text-green-600"
+                  onClick={() => setSidebarOpen(false)}
                 >
                   Halaman Admin
                 </Link>
-              )}
-
-              {/* Tampilan untuk User yang Login */}
-              <div className="flex items-center space-x-4">
-                {/* Teks Salam dengan Gaya Tombol */}
-                <div className="bg-green-600 text-white py-2 px-4 rounded-lg">
-                  Hai, {user?.first_name || "Pengguna"} {user?.last_name || ""}
-                </div>
-
-                {/* Foto Profil */}
-                {user?.photo ? (
-                  <img
-                  src={`https://smartconweb.my.id${user.photo}`} // API Endpoint dengan HTTPS
-                  alt="Foto Profil"
-                  className="w-8 h-8 rounded-full cursor-pointer"
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                />
-                ) : (
-                  <div
-                    className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white cursor-pointer"
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                  >
-                    {user?.first_name?.[0]?.toUpperCase() || "U"}
-                  </div>
-                )}
-              </div>
-
-              {/* Dropdown Menu */}
-              {dropdownOpen && (
-                <div className="absolute top-12 right-0 bg-white shadow-md rounded-lg py-2 w-40 z-50">
+              </li>
+            )}
+            {isLoggedIn ? (
+              <li>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setSidebarOpen(false);
+                  }}
+                  className="text-red-500 text-lg hover:text-red-700"
+                >
+                  Logout
+                </button>
+              </li>
+            ) : (
+              <>
+                <li>
                   <Link
-                    to="/profile"
-                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition"
-                    onClick={() => setDropdownOpen(false)}
+                    to="/login"
+                    className="text-green-600 text-lg hover:text-green-800"
+                    onClick={() => setSidebarOpen(false)}
                   >
-                    Edit Profil
+                    Masuk
                   </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition"
+                </li>
+                <li>
+                  <Link
+                    to="/register"
+                    className="text-green-600 text-lg hover:text-green-800"
+                    onClick={() => setSidebarOpen(false)}
                   >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </>
-          ) : (
-            <>
-              {/* Tampilan untuk User yang Belum Login */}
-              <Link
-                to="/login"
-                className="hover:text-green-800 py-2 px-4 transition duration-200 font-semibold text-xs sm:text-sm"
-              >
-                Masuk
-              </Link>
-              <Link
-                to="/register"
-                className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded transition duration-200 font-semibold text-xs sm:text-sm"
-              >
-                Daftar
-              </Link>
-            </>
-          )}
+                    Daftar
+                  </Link>
+                </li>
+              </>
+            )}
+          </ul>
         </div>
-      </div>
-
-      {/* Menu Navigasi - Tampilan Mobile */}
-      <div className={`md:hidden ${menuOpen ? "block" : "hidden"} absolute top-16 left-0 w-full bg-yellow-50 shadow-md py-4 px-6 space-y-4`}>
-        <Link to="/deteksi-penyakit" className="block text-green-600 font-semibold hover:text-green-800 transition duration-200">
-          Deteksi Penyakit
-        </Link>
-        <Link to="/edukasi" className="block text-green-600 font-semibold hover:text-green-800 transition duration-200">
-          Edukasi
-        </Link>
-        <Link to="/forum" className="block text-green-600 font-semibold hover:text-green-800 transition duration-200">
-          Forum
-        </Link>
-      </div>
-    </nav>
+      )}
+    </>
   );
 }
 
