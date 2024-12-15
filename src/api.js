@@ -151,4 +151,19 @@ export const updateArticle = (id, updatedData) => {
     .catch(error => console.error('Error updating article:', error));
 };
 
+// Fungsi untuk upload gambar penyakit dan mendeteksi penyakit
+export const detectDisease = async (formData) => {
+  try {
+    const response = await api.post('/disease-detection/detect', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // Penting untuk upload file
+      },
+    });
+    return response.data; // Mengembalikan respons dari backend
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+
 export default api;
