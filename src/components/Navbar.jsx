@@ -63,13 +63,13 @@ function Navbar() {
                   Hai, {user?.first_name || "User"}
                 </span>
 
-                {/* Foto Profil (Path Berbeda untuk Development) */}
+                {/* Foto Profil */}
                 <div className="relative">
                   <img
                     src={
                       user?.photo
-                        ? `http://localhost:3000/uploads/profiles/${user.photo}`
-                        : "http://localhost:3000/uploads/default.png"
+                        ? `https://smartconweb.my.id${user.photo}` // API Endpoint dengan HTTPS
+                        : "https://smartconweb.my.id/uploads/default.png"
                     }
                     alt="Foto Profil"
                     className="w-8 h-8 rounded-full cursor-pointer"
