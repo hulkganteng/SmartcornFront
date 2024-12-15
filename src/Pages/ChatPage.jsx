@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Message from "../components/Message";
 
 // Gantilah dengan URL WebSocket yang aman jika diperlukan
-const socket = io("https://smartconweb.my.id/api/", {
+const socket = io("https://smartconweb.my.id", {
   transports: ["websocket"],
   query: { token: localStorage.getItem("token") },
 });
