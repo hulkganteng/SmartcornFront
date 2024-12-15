@@ -66,7 +66,7 @@ function EducationPage() {
                   article.image
                     ? article.image.startsWith("http")
                       ? article.image // Jika sudah berupa URL lengkap
-                      : `https://smartconweb.my.id/${article.image.replace(/^uploads\//, 'uploads/')}` // Tambahkan domain hanya jika path relatif
+                      : `https://smartconweb.my.id/uploads/${article.image.replace(/^\/?uploads\//, '')}` // Pastikan path valid
                     : "https://smartconweb.my.id/uploads/default.png" // Gambar default jika tidak ada gambar
                 }
                 title={article.title}
