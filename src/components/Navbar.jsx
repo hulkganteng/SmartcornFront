@@ -175,6 +175,17 @@ function Navbar() {
                 </Link>
               </li>
             )}
+            {isLoggedIn && (
+              <li>
+                <Link
+                  to="/profile"
+                  className="text-gray-700 text-lg hover:text-green-600"
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  Edit Profil
+                </Link>
+              </li>
+            )}
             {isLoggedIn ? (
               <li>
                 <button
