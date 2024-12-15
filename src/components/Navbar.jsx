@@ -69,7 +69,7 @@ function Navbar() {
                     src={
                       user?.photo
                         ? `https://smartconweb.my.id${user.photo}` // API Endpoint dengan HTTPS
-                        : "https://smartconweb.my.id/uploads/default.png"
+                        : "https://smartconweb.my.id/uploads/profiles/profile.png"
                     }
                     alt="Foto Profil"
                     className="w-8 h-8 rounded-full cursor-pointer"
