@@ -118,7 +118,7 @@ function Navbar() {
                 {/* Foto Profil */}
                 {user?.photo ? (
                   <img
-                  src={`https://smartconweb.my.id:3000${user.photo}`} // API Endpoint dengan HTTPS
+                  src={`https://smartconweb.my.id${user.photo}`} // API Endpoint dengan HTTPS
                   alt="Foto Profil"
                   className="w-8 h-8 rounded-full cursor-pointer"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
