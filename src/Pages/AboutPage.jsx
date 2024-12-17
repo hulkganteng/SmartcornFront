@@ -5,7 +5,7 @@ const AboutPage = () => {
   return (
     <div className="bg-gray-100 min-h-screen py-12 px-6">
       <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-8">
-        <h1 className="text-4xl font-semibold text-center text-blue-700 mb-6">
+        <h1 className="text-4xl font-semibold text-center text-green-700 mb-6">
           Pelajari Lebih Lanjut di Smartcorn
         </h1>
 
@@ -18,7 +18,7 @@ const AboutPage = () => {
           deteksi dini penyakit tanaman dan cara-cara untuk mencegahnya.
         </p>
 
-        <h2 className="text-2xl font-semibold text-blue-600 mt-6 mb-4">
+        <h2 className="text-2xl font-semibold text-green-700 mt-6 mb-4">
           Edukasi untuk Petani Jagung
         </h2>
         <p className="text-lg text-gray-700 mb-4">
@@ -31,7 +31,7 @@ const AboutPage = () => {
           cara-cara praktis yang bisa langsung diterapkan di ladang jagung Anda.
         </p>
 
-        <h2 className="text-2xl font-semibold text-blue-600 mt-6 mb-4">
+        <h2 className="text-2xl font-semibold text-green-700 mt-6 mb-4">
           Deteksi Penyakit Tanaman Jagung
         </h2>
         <p className="text-lg text-gray-700 mb-4">
@@ -43,7 +43,7 @@ const AboutPage = () => {
           rekomendasi tindakan yang tepat untuk menjaga kesehatan tanaman Anda.
         </p>
 
-        <h2 className="text-2xl font-semibold text-blue-600 mt-6 mb-4">
+        <h2 className="text-2xl font-semibold text-green-700 mt-6 mb-4">
           Diskusi dan Komunitas Petani
         </h2>
         <p className="text-lg text-gray-700 mb-4">
