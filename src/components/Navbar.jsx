@@ -182,7 +182,7 @@ function Navbar() {
                   className="text-gray-700 text-lg hover:text-green-600"
                   onClick={() => setSidebarOpen(false)}
                 >
-                  Edit Profil
+                  Profil
                 </Link>
               </li>
             )}
