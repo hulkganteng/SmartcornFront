@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getArticleById, updateArticle } from "../api"; // Mengimpor fungsi API dari api.js
+import ReactQuill from "react-quill"; // Mengimpor React Quill
+import "react-quill/dist/quill.snow.css";
 
 function EditArticlePage() {
   const { id } = useParams();
@@ -62,16 +64,23 @@ function EditArticlePage() {
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="content" className="block text-sm font-medium">Konten</label>
-          <textarea
-            id="content"
-            name="content"
-            value={article.content}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded"
-            rows="5"
-          />
-        </div>
+                <label className="block text-gray-700">Konten</label>
+                {/* React Quill Editor untuk konten */}
+                <ReactQuill
+                  value={formData.content}
+                  onChange={handleEditorChange}
+                  className="border p-2 rounded"
+                  modules={{
+                    toolbar: [
+                      [{ header: "1" }, { header: "2" }, { font: [] }],
+                      [{ list: "ordered" }, { list: "bullet" }],
+                      ["bold", "italic", "underline"],
+                      [{ align: [] }],
+                      ["link"],
+                    ],
+                  }}
+                />
+              </div>
         <div className="mb-4">
           <label htmlFor="author" className="block text-sm font-medium">Penulis</label>
           <input
