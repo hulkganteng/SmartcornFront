@@ -24,6 +24,7 @@ const AddArticlePage = lazy(() => import("./Pages/AddArticlePage"));
 const ChatPage = lazy(() => import("./Pages/ChatPage"));
 const AdminPage = lazy(() => import("./Pages/AdminPage"));
 const EditArticlePage = lazy(() => import("./Pages/EditArticlePage"));
+const AboutPage = lazy(() => import("./Pages/AboutPage"));
 
 function App() {
   // State untuk menyimpan informasi user yang login
@@ -63,6 +64,7 @@ function App() {
             <Route path="/forum/community" element={<ForumCommunityPage />} />
             <Route path="/add-article" element={<AddArticlePage />} />
             <Route path="/chat" element={<ChatPage />} />
+            <Route path="/about" element={<AboutPage />} />
 
             {/* Protected Routes */}
             <Route
