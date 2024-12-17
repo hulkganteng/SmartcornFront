@@ -1,30 +1,49 @@
-// src/Pages/EditArticlePage.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getArticleById, updateArticle } from "../api"; // Pastikan impor dari api.js benar
+import { getArticleById, updateArticle } from "../api"; // Mengimpor fungsi API dari api.js
 
 function EditArticlePage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [article, setArticle] = useState(null);
+  const [article, setArticle] = useState({ title: "", content: "", author: "", categories: "" });
+  const [image, setImage] = useState(null);
 
+  // Ambil data artikel berdasarkan ID menggunakan fungsi dari api.js
   useEffect(() => {
-    // Ambil artikel berdasarkan ID
-    getArticleById(id)
-      .then(data => {
-        setArticle(data);
-      })
-      .catch(error => console.error("Error fetching article:", error));
+    const fetchArticle = async () => {
+      try {
+        const response = await getArticleById(id); // Menggunakan fungsi getArticleById
+        setArticle(response); // Menyimpan data artikel ke state
+      } catch (error) {
+        console.error("Error fetching article:", error);
+      }
+    };
+    fetchArticle();
   }, [id]);
 
-  const handleSubmit = () => {
-    // Logika untuk update artikel
-    const updatedData = { ...article };
-    updateArticle(id, updatedData)
-      .then(response => {
-        navigate(`/article/${id}`);
-      })
-      .catch(error => console.error("Error updating article:", error));
+  // Handle perubahan form
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setArticle((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle submit form
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("title", article.title);
+    formData.append("content", article.content);
+    formData.append("author", article.author);
+    formData.append("categories", article.categories);
+    if (image) formData.append("image", image);
+
+    try {
+      await updateArticle(id, formData); // Menggunakan fungsi updateArticle
+      navigate("/admin"); // Kembali ke halaman admin setelah berhasil
+    } catch (error) {
+      console.error("Error updating article:", error);
+    }
   };
 
   return (
