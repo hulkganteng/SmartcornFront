@@ -24,7 +24,7 @@ const AddArticlePage = lazy(() => import("./Pages/AddArticlePage"));
 const ChatPage = lazy(() => import("./Pages/ChatPage"));
 const AdminPage = lazy(() => import("./Pages/AdminPage"));
 const EditArticlePage = lazy(() => import("./Pages/EditArticlePage"));
-const AboutPage = lazy(() => import("./Pages/AboutPage"));
+const AboutPage = lazy(()=>import("./Pages/AboutPage"))
 
 function App() {
   // State untuk menyimpan informasi user yang login
